@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <title>Usuários · AutoCRM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23ff7a59%22/><text x=%2212%22 y=%2217%22 font-size=%2214%22 text-anchor=%22middle%22 fill=%22%231a0700%22 font-family=%22Arial%22 font-weight=%22bold%22>A</text></svg>">
+  <script>(function(){try{var t=localStorage.getItem('autocrm_tema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-bs-theme',t);}catch(e){}})();</script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="page-content" id="paginaUsuarios">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div>
+            <p class="text-muted-2 mb-0" style="font-size:.85rem; max-width:640px;">
+              Cada pessoa entra com um perfil: Administrador vê tudo, Atendente cuida de clientes e OS, Financeiro cuida do caixa.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary text-nowrap" id="btnNovoUsuario"><i class="bi bi-plus-lg me-1"></i>Novo Usuário</button>
+        </div>
+
+        <div class="panel p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>Criado em</th><th class="text-end">Ações</th></tr>
+              </thead>
+              <tbody id="corpoTabelaUsuarios"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Novo/Editar Usuário -->
+  <div class="modal fade" id="modalUsuario" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formUsuario">
+          <div class="modal-header">
+            <h5 class="modal-title" id="tituloModalUsuario">Novo Usuário</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="usuarioId">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Nome completo *</label>
+                <input type="text" class="form-control" id="usuarioNome" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">E-mail *</label>
+                <input type="email" class="form-control" id="usuarioEmail" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" id="labelSenha">Senha *</label>
+                <input type="password" class="form-control" id="usuarioSenha" autocomplete="new-password">
+                <div class="form-text" id="dicaSenha">Mínimo de 6 caracteres.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Perfil *</label>
+                <select class="form-select" id="usuarioPerfil" required>
+                  <option value="admin">Administrador</option>
+                  <option value="atendente">Atendente</option>
+                  <option value="financeiro">Financeiro</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="usuarioAtivo" checked>
+                  <label class="form-check-label" for="usuarioAtivo">Usuário ativo (consegue fazer login)</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Salvar usuário</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/usuarios.js"></script>
+</body>
+</html>

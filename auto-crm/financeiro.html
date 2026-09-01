@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <title>Financeiro · AutoCRM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23ff7a59%22/><text x=%2212%22 y=%2217%22 font-size=%2214%22 text-anchor=%22middle%22 fill=%22%231a0700%22 font-family=%22Arial%22 font-weight=%22bold%22>A</text></svg>">
+  <script>(function(){try{var t=localStorage.getItem('autocrm_tema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-bs-theme',t);}catch(e){}})();</script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="page-content" id="paginaFinanceiro">
+
+        <div class="row g-3 mb-3" id="cardsFinanceiro"></div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-lg-8">
+            <div class="panel h-100">
+              <div class="panel-title">Receitas x despesas</div>
+              <div class="panel-sub mb-2">Últimos 6 meses</div>
+              <div class="chart-wrap"><canvas id="graficoReceitaDespesa"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="panel h-100">
+              <div class="panel-title">Despesas por categoria</div>
+              <div class="panel-sub mb-2">Todo o período</div>
+              <div class="chart-wrap"><canvas id="graficoCategorias"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-lg-8">
+            <div class="panel p-0">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 pb-0">
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="busca-wrap">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control" id="campoBusca" placeholder="Buscar descrição ou categoria...">
+                  </div>
+                  <select class="form-select" id="filtroTipo" style="width:auto;">
+                    <option value="">Receitas e despesas</option>
+                    <option value="receita">Só receitas</option>
+                    <option value="despesa">Só despesas</option>
+                  </select>
+                  <select class="form-select" id="filtroPeriodo" style="width:auto;">
+                    <option value="mes">Este mês</option>
+                    <option value="3meses" selected>Últimos 3 meses</option>
+                    <option value="6meses">Últimos 6 meses</option>
+                    <option value="tudo">Todo o período</option>
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="btnNovoLancamento"><i class="bi bi-plus-lg me-1"></i>Novo Lançamento</button>
+              </div>
+              <div class="table-responsive mt-2">
+                <table class="table table-hover align-middle mb-0">
+                  <thead>
+                    <tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th class="text-end">Valor</th><th class="text-end">Ações</th></tr>
+                  </thead>
+                  <tbody id="corpoTabelaLancamentos"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="panel h-100">
+              <div class="panel-title">Contas a receber</div>
+              <div class="panel-sub mb-3">Ordens de serviço com pagamento pendente ou parcial</div>
+              <div id="listaContasReceber"></div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Lançamento -->
+  <div class="modal fade" id="modalLancamento" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formLancamento">
+          <div class="modal-header">
+            <h5 class="modal-title">Novo Lançamento</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label">Tipo *</label>
+                <select class="form-select" id="lancamentoTipo" required>
+                  <option value="receita">Receita</option>
+                  <option value="despesa" selected>Despesa</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Data *</label>
+                <input type="date" class="form-control" id="lancamentoData" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Categoria *</label>
+                <input type="text" class="form-control" id="lancamentoCategoria" list="listaCategorias" placeholder="Ex.: Aluguel, Compras, Contas..." required>
+                <datalist id="listaCategorias">
+                  <option value="Aluguel"><option value="Compras"><option value="Contas"><option value="Manutenção"><option value="Salários"><option value="Marketing"><option value="Outros">
+                </datalist>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Descrição *</label>
+                <input type="text" class="form-control" id="lancamentoDescricao" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Valor (R$) *</label>
+                <input type="number" class="form-control" id="lancamentoValor" min="0.01" step="0.01" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Salvar lançamento</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Registrar Pagamento (contas a receber) -->
+  <div class="modal fade" id="modalPagamentoFin" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formPagamentoFin">
+          <div class="modal-header">
+            <h5 class="modal-title">Registrar pagamento — OS #<span id="pagFinNumeroOS"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="pagFinOrdemId">
+            <div class="d-flex justify-content-between text-muted-2 mb-3" style="font-size:.85rem;">
+              <span>Total: <strong id="pagFinValorTotal" style="color:var(--acrm-text)"></strong></span>
+              <span>Pago: <strong id="pagFinValorPago" style="color:var(--acrm-text)"></strong></span>
+              <span>Restante: <strong id="pagFinValorRestante" style="color:var(--acrm-warning)"></strong></span>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Valor a registrar *</label>
+                <input type="number" class="form-control" id="pagFinValor" min="0.01" step="0.01" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Forma de pagamento *</label>
+                <select class="form-select" id="pagFinForma" required>
+                  <option value="Pix">Pix</option>
+                  <option value="Dinheiro">Dinheiro</option>
+                  <option value="Cartão de Débito">Cartão de Débito</option>
+                  <option value="Cartão de Crédito">Cartão de Crédito</option>
+                  <option value="Transferência">Transferência</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-cash-coin me-1"></i>Registrar pagamento</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/financeiro.js"></script>
+</body>
+</html>

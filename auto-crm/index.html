@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <title>Entrar · AutoCRM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23ff7a59%22/><text x=%2212%22 y=%2217%22 font-size=%2214%22 text-anchor=%22middle%22 fill=%22%231a0700%22 font-family=%22Arial%22 font-weight=%22bold%22>A</text></svg>">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <script>(function(){try{var t=localStorage.getItem('autocrm_tema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-bs-theme',t);}catch(e){}})();</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="row g-0">
+        <div class="col-lg-6 login-hero">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <span class="brand-mark"><i class="bi bi-car-front-fill"></i></span>
+              <div>
+                <div class="fw-bold fs-5">AutoCRM</div>
+                <div class="text-muted-2" style="font-size:.78rem;">Gestão para estética automotiva</div>
+              </div>
+            </div>
+            <p class="lead-title mb-3">O painel da oficina, do agendamento ao caixa.</p>
+            <p class="text-muted-2 mb-0" style="font-size:.9rem;">Clientes, veículos, ordens de serviço, financeiro e estoque no mesmo lugar — no ritmo de um lava-rápido, não de uma planilha.</p>
+          </div>
+
+          <ul class="list-unstyled mt-4 mb-0" style="font-size:.88rem;">
+            <li class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-check-circle-fill" style="color:var(--acrm-accent)"></i> Funil de ordens no estilo Pipedrive</li>
+            <li class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-check-circle-fill" style="color:var(--acrm-accent)"></i> Caixa, contas a receber e estoque</li>
+            <li class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill" style="color:var(--acrm-accent)"></i> Perfis de acesso por função</li>
+          </ul>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="p-4 p-lg-5">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="fw-bold mb-1">Entrar</h4>
+                <p class="text-muted-2 mb-0" style="font-size:.88rem;">Acesse com seu e-mail e senha.</p>
+              </div>
+              <button class="btn-icon" type="button" id="btnTemaLogin" title="Alternar tema" aria-label="Alternar tema"></button>
+            </div>
+
+            <div id="alertaErro" class="alert alert-danger d-none py-2" role="alert"></div>
+            <div id="alertaCrypto" class="alert alert-warning d-none py-2" style="font-size:.82rem;" role="alert">
+              Seu navegador não tem suporte a Web Crypto (necessário para o login). Use Chrome, Edge ou Firefox atualizado, ou abra por um servidor local.
+            </div>
+
+            <form id="formLogin" novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="campoEmail">E-mail</label>
+                <input type="email" class="form-control" id="campoEmail" placeholder="voce@empresa.com" required autocomplete="username">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="campoSenha">Senha</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="campoSenha" placeholder="••••••••" required autocomplete="current-password">
+                  <button class="btn btn-outline-secondary" type="button" id="btnMostrarSenha" tabindex="-1" aria-label="Mostrar senha"><i class="bi bi-eye"></i></button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-2" id="btnEntrar">
+                <span id="textoBotaoEntrar">Entrar</span>
+                <span class="spinner-border spinner-border-sm ms-1 d-none" id="spinnerEntrar"></span>
+              </button>
+            </form>
+
+            <div class="login-divider" aria-hidden="true"><span>ou teste agora</span></div>
+
+            <div class="demo-panel">
+              <p class="demo-panel-title">Acesso de demonstração</p>
+              <p class="demo-panel-sub">Perfis prontos com dados de exemplo — um clique e você entra.</p>
+              <div class="demo-list" id="demoLogins" role="group" aria-label="Entrar com conta de demonstração">
+                <button type="button" class="demo-option" data-email="admin@autocrm.com" data-senha="admin123">
+                  <span class="demo-option-icon icon-tint-accent"><i class="bi bi-shield-lock"></i></span>
+                  <span class="demo-option-body">
+                    <span class="demo-option-title">Administrador</span>
+                    <span class="demo-option-desc">Dashboard, clientes, OS, financeiro, estoque e usuários</span>
+                  </span>
+                  <i class="bi bi-arrow-right demo-option-arrow" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="demo-option" data-email="atendente@autocrm.com" data-senha="atendente123">
+                  <span class="demo-option-icon icon-tint-info"><i class="bi bi-headset"></i></span>
+                  <span class="demo-option-body">
+                    <span class="demo-option-title">Atendente</span>
+                    <span class="demo-option-desc">Clientes, veículos e ordens de serviço</span>
+                  </span>
+                  <i class="bi bi-arrow-right demo-option-arrow" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="demo-option" data-email="financeiro@autocrm.com" data-senha="financeiro123">
+                  <span class="demo-option-icon icon-tint-success"><i class="bi bi-cash-coin"></i></span>
+                  <span class="demo-option-body">
+                    <span class="demo-option-title">Financeiro</span>
+                    <span class="demo-option-desc">Caixa, contas a receber e ordens (leitura)</span>
+                  </span>
+                  <i class="bi bi-arrow-right demo-option-arrow" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <p class="text-muted-2 text-center mt-4 mb-0" style="font-size:.76rem;">Os dados ficam só neste navegador — nada é enviado para a internet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script>
+    (function () {
+      DB.init();
+
+      if (AutoCRMAuth.redirectSeLogado()) return;
+
+      AutoCRMUI.aplicarTema(AutoCRMUI.getTema());
+      var btnTema = document.getElementById('btnTemaLogin');
+      btnTema.innerHTML = AutoCRMUI.getTema() === 'light' ? '<i class="bi bi-moon-stars"></i>' : '<i class="bi bi-sun"></i>';
+      btnTema.addEventListener('click', function () {
+        AutoCRMUI.aplicarTema(AutoCRMUI.getTema() === 'dark' ? 'light' : 'dark');
+        btnTema.innerHTML = AutoCRMUI.getTema() === 'light' ? '<i class="bi bi-moon-stars"></i>' : '<i class="bi bi-sun"></i>';
+      });
+
+      if (!AutoCRMAuth.suportaWebCrypto()) {
+        document.getElementById('alertaCrypto').classList.remove('d-none');
+      }
+
+      document.getElementById('btnMostrarSenha').addEventListener('click', function () {
+        var campo = document.getElementById('campoSenha');
+        var icone = this.querySelector('i');
+        var mostrando = campo.type === 'text';
+        campo.type = mostrando ? 'password' : 'text';
+        icone.className = mostrando ? 'bi bi-eye' : 'bi bi-eye-slash';
+      });
+
+      var form = document.getElementById('formLogin');
+      var alertaErro = document.getElementById('alertaErro');
+      var btnEntrar = document.getElementById('btnEntrar');
+      var textoBotao = document.getElementById('textoBotaoEntrar');
+      var spinner = document.getElementById('spinnerEntrar');
+
+      function setCarregando(ativo) {
+        btnEntrar.disabled = ativo;
+        textoBotao.textContent = ativo ? 'Entrando...' : 'Entrar';
+        spinner.classList.toggle('d-none', !ativo);
+        document.querySelectorAll('.demo-option').forEach(function (btn) {
+          btn.disabled = ativo;
+          btn.classList.toggle('carregando', ativo && btn.classList.contains('ativo-demo'));
+        });
+      }
+
+      function entrar(email, senha, btnDemo) {
+        alertaErro.classList.add('d-none');
+        document.querySelectorAll('.demo-option').forEach(function (b) { b.classList.remove('ativo-demo'); });
+        if (btnDemo) btnDemo.classList.add('ativo-demo');
+        if (!email || !senha) {
+          alertaErro.textContent = 'Preencha e-mail e senha.';
+          alertaErro.classList.remove('d-none');
+          return;
+        }
+        setCarregando(true);
+        AutoCRMAuth.login(email, senha).then(function (resultado) {
+          if (!resultado.ok) {
+            alertaErro.textContent = resultado.erro;
+            alertaErro.classList.remove('d-none');
+            setCarregando(false);
+            document.querySelectorAll('.demo-option').forEach(function (b) { b.classList.remove('ativo-demo'); });
+            return;
+          }
+          window.location.href = 'dashboard.html';
+        });
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        entrar(document.getElementById('campoEmail').value.trim(), document.getElementById('campoSenha').value);
+      });
+
+      document.getElementById('demoLogins').addEventListener('click', function (e) {
+        var chip = e.target.closest('.demo-option');
+        if (!chip || chip.disabled) return;
+        document.getElementById('campoEmail').value = chip.getAttribute('data-email');
+        document.getElementById('campoSenha').value = chip.getAttribute('data-senha');
+        entrar(chip.getAttribute('data-email'), chip.getAttribute('data-senha'), chip);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <title>Estoque · AutoCRM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23ff7a59%22/><text x=%2212%22 y=%2217%22 font-size=%2214%22 text-anchor=%22middle%22 fill=%22%231a0700%22 font-family=%22Arial%22 font-weight=%22bold%22>A</text></svg>">
+  <script>(function(){try{var t=localStorage.getItem('autocrm_tema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-bs-theme',t);}catch(e){}})();</script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="page-content" id="paginaEstoque">
+
+        <div class="row g-3 mb-3" id="cardsEstoque"></div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div class="busca-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="campoBusca" placeholder="Buscar produto ou categoria...">
+          </div>
+          <button type="button" class="btn btn-primary" id="btnNovoProduto"><i class="bi bi-plus-lg me-1"></i>Novo Produto</button>
+        </div>
+
+        <div class="panel p-0 mb-3">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr><th>Produto</th><th>Categoria</th><th>Quantidade</th><th>Mínimo</th><th>Status</th><th>Custo unit.</th><th class="text-end">Ações</th></tr>
+              </thead>
+              <tbody id="corpoTabelaProdutos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Movimentações recentes</div>
+          <div class="panel-sub mb-2">Últimas 10 entradas e saídas do estoque</div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Motivo</th></tr></thead>
+              <tbody id="corpoTabelaMovimentacoes"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Novo/Editar Produto -->
+  <div class="modal fade" id="modalProduto" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formProduto">
+          <div class="modal-header">
+            <h5 class="modal-title" id="tituloModalProduto">Novo Produto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="produtoId">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Nome do produto *</label>
+                <input type="text" class="form-control" id="produtoNome" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Categoria *</label>
+                <input type="text" class="form-control" id="produtoCategoria" list="listaCategoriasProduto" required>
+                <datalist id="listaCategoriasProduto">
+                  <option value="Limpeza"><option value="Proteção"><option value="Polimento"><option value="Acabamento"><option value="Acessórios">
+                </datalist>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Unidade *</label>
+                <input type="text" class="form-control" id="produtoUnidade" placeholder="Litro, Unidade, Pote..." required>
+              </div>
+              <div class="col-md-4" id="grupoQuantidadeInicial">
+                <label class="form-label">Quantidade inicial *</label>
+                <input type="number" class="form-control" id="produtoQuantidade" min="0" step="1" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Estoque mínimo *</label>
+                <input type="number" class="form-control" id="produtoEstoqueMinimo" min="0" step="1" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Custo unitário (R$)</label>
+                <input type="number" class="form-control" id="produtoPrecoCusto" min="0" step="0.01">
+              </div>
+              <div class="col-12 d-none" id="avisoEdicaoQuantidade">
+                <div class="alert alert-warning py-2 mb-0" style="font-size:.8rem;">Para alterar a quantidade em estoque de um produto existente, use o botão <strong>Movimentar</strong> na tabela (assim fica registrado no histórico).</div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Salvar produto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Movimentar Estoque -->
+  <div class="modal fade" id="modalMovimentacao" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formMovimentacao">
+          <div class="modal-header">
+            <h5 class="modal-title">Movimentar estoque — <span id="movimentacaoProdutoNome"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="movimentacaoProdutoId">
+            <p class="text-muted-2" style="font-size:.85rem;">Quantidade atual: <strong id="movimentacaoQuantidadeAtual" style="color:var(--acrm-text)"></strong></p>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Tipo de movimentação *</label>
+                <div class="btn-group w-100" role="group">
+                  <input type="radio" class="btn-check" name="movimentacaoTipo" id="tipoEntrada" value="entrada" checked>
+                  <label class="btn btn-outline-primary" for="tipoEntrada"><i class="bi bi-box-arrow-in-down me-1"></i>Entrada</label>
+                  <input type="radio" class="btn-check" name="movimentacaoTipo" id="tipoSaida" value="saida">
+                  <label class="btn btn-outline-primary" for="tipoSaida"><i class="bi bi-box-arrow-up me-1"></i>Saída</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Quantidade *</label>
+                <input type="number" class="form-control" id="movimentacaoQuantidade" min="1" step="1" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Motivo *</label>
+                <input type="text" class="form-control" id="movimentacaoMotivo" placeholder="Ex.: Compra, uso em OS, perda..." required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Confirmar movimentação</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/estoque.js"></script>
+</body>
+</html>

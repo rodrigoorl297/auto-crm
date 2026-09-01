@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <title>Clientes · AutoCRM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23ff7a59%22/><text x=%2212%22 y=%2217%22 font-size=%2214%22 text-anchor=%22middle%22 fill=%22%231a0700%22 font-family=%22Arial%22 font-weight=%22bold%22>A</text></svg>">
+  <script>(function(){try{var t=localStorage.getItem('autocrm_tema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-bs-theme',t);}catch(e){}})();</script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="page-content" id="paginaClientes">
+
+        <div class="toolbar-page">
+          <div class="busca-wrap flex-grow-1">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="campoBusca" placeholder="Buscar cliente..." aria-label="Buscar clientes">
+            <span class="atalho-busca d-none d-md-inline">/</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="contador-lista" id="contadorClientes"></span>
+            <button type="button" class="btn btn-primary" id="btnNovoCliente" aria-label="Novo cliente">
+              <i class="bi bi-plus-lg"></i><span class="d-none d-sm-inline ms-1">Novo</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3" id="listaClientes"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Novo/Editar Cliente -->
+  <div class="modal fade" id="modalCliente" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formCliente">
+          <div class="modal-header">
+            <h5 class="modal-title" id="tituloModalCliente">Novo Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="clienteId">
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label class="form-label">Nome completo *</label>
+                <input type="text" class="form-control" id="clienteNome" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Telefone / WhatsApp *</label>
+                <input type="text" class="form-control" id="clienteTelefone" placeholder="(62) 90000-0000" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="clienteEmail">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">CPF / CNPJ</label>
+                <input type="text" class="form-control" id="clienteDocumento">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="clienteEndereco">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Observações</label>
+                <textarea class="form-control" id="clienteObservacoes" rows="2"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Salvar cliente</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Veículos do Cliente -->
+  <div class="modal fade" id="modalVeiculos" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title mb-0">Veículos de <span id="veiculosClienteNome">—</span></h5>
+            <div class="text-muted-2" style="font-size:.78rem;">Cadastre e gerencie os veículos deste cliente</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="veiculosClienteId">
+          <div id="listaVeiculosCliente" class="mb-3"></div>
+
+          <form id="formVeiculo" class="border-top pt-3" style="border-color: var(--acrm-border) !important;">
+            <input type="hidden" id="veiculoId">
+            <div class="row g-2 align-items-end">
+              <div class="col-6 col-md-3">
+                <label class="form-label">Placa *</label>
+                <input type="text" class="form-control text-uppercase" id="veiculoPlaca" maxlength="7" required>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">Marca *</label>
+                <input type="text" class="form-control" id="veiculoMarca" required>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">Modelo *</label>
+                <input type="text" class="form-control" id="veiculoModelo" required>
+              </div>
+              <div class="col-3 col-md-1">
+                <label class="form-label">Cor</label>
+                <input type="text" class="form-control" id="veiculoCor">
+              </div>
+              <div class="col-3 col-md-1">
+                <label class="form-label">Ano</label>
+                <input type="number" class="form-control" id="veiculoAno" min="1950" max="2100">
+              </div>
+              <div class="col-12 col-md-1 d-flex gap-1">
+                <button type="submit" class="btn btn-primary flex-fill" id="btnSalvarVeiculo" title="Adicionar"><i class="bi bi-plus-lg"></i></button>
+                <button type="button" class="btn btn-outline-secondary d-none" id="btnCancelarEdicaoVeiculo" title="Cancelar edição"><i class="bi bi-x-lg"></i></button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/clientes.js?v=20260901"></script>
+</body>
+</html>
